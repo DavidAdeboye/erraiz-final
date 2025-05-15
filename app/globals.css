@@ -1,26 +1,91 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+  --primary: 0, 168, 17;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors;
+  }
+
+  .btn-outline {
+    @apply border border-gray-300 hover:border-gray-400 bg-white text-gray-700 font-medium py-2 px-4 rounded transition-colors;
+  }
+
+  .product-card {
+    @apply bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow;
+  }
+
+  .input-field {
+    @apply w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500;
+  }
+
+  .checkbox-field {
+    @apply h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500;
+  }
+
+  .rating-stars {
+    @apply flex items-center text-green-600;
+  }
+
+  .nav-link {
+    @apply text-gray-700 hover:text-green-600 transition-colors;
+  }
+
+  .active-nav-link {
+    @apply text-green-600 font-medium;
+  }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 640px) {
+  .product-card {
+    @apply rounded-md;
+  }
+
+  .product-card .p-3 {
+    @apply p-2;
+  }
+
+  .product-card h3 {
+    @apply text-xs;
+  }
+
+  .btn-primary {
+    @apply py-1.5 px-3 text-xs;
+  }
+
+  .mobile-section-header {
+    @apply flex items-center justify-between mb-3;
+  }
+
+  .mobile-section-title {
+    @apply text-base font-semibold;
+  }
+
+  .mobile-see-all {
+    @apply text-xs text-green-600;
+  }
+
+  .mobile-product-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+}
+
+/* Add these styles for the feature tour */
+.tour-highlight {
+  position: relative;
+  z-index: 45;
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.5);
+  border-radius: 4px;
 }
