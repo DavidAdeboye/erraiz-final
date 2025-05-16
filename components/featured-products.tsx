@@ -15,7 +15,7 @@ export default function FeaturedProducts() {
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
             <h3 className="text-white text-xl font-semibold mb-2">Plastic Made Products</h3>
-            <Link href="/categories/plastic-made" className="btn-primary inline-block w-max">
+            <Link href="/category/plastic-made-products" className="btn-primary inline-block w-max">
               Shop Now
             </Link>
           </div>
@@ -32,8 +32,8 @@ export default function FeaturedProducts() {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
               <h3 className="text-white text-sm font-semibold mb-2">Shoes</h3>
-              <Link href="/categories/shoes" className="text-white text-xs underline">
-                Shop Now
+              <Link href="/category/footwear" className="text-white text-xs underline">
+                View All
               </Link>
             </div>
           </div>
@@ -48,8 +48,8 @@ export default function FeaturedProducts() {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
               <h3 className="text-white text-sm font-semibold mb-2">Accessories</h3>
-              <Link href="/categories/accessories" className="text-white text-xs underline">
-                Shop Now
+              <Link href="/category/accessories" className="text-white text-xs underline">
+                View All
               </Link>
             </div>
           </div>
@@ -64,8 +64,8 @@ export default function FeaturedProducts() {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
               <h3 className="text-white text-sm font-semibold mb-2">Clothing</h3>
-              <Link href="/categories/clothing" className="text-white text-xs underline">
-                Shop Now
+              <Link href="/category/clothing" className="text-white text-xs underline">
+                View All
               </Link>
             </div>
           </div>
@@ -80,8 +80,8 @@ export default function FeaturedProducts() {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
               <h3 className="text-white text-sm font-semibold mb-2">Home Goods</h3>
-              <Link href="/categories/home-goods" className="text-white text-xs underline">
-                Shop Now
+              <Link href="/category/homeware" className="text-white text-xs underline">
+                View All
               </Link>
             </div>
           </div>

@@ -102,6 +102,7 @@ export const products: Product[] = [
 export const categories: Category[] = [
   {
     id: "plastic-made-products",
+    slug: "plastic-made-products",
     name: "Plastic Made Products",
     description: "Discover a range of innovative and sustainable products crafted from recycled plastics.",
     image: "/categories/plastic-made.jpg",
@@ -109,6 +110,7 @@ export const categories: Category[] = [
   },
   {
     id: "glass-made-products",
+    slug: "glass-made-products",
     name: "Glass Made Products",
     description: "Beautiful and functional items crafted from recycled glass materials.",
     image: "/categories/glass-made.jpg",
@@ -116,6 +118,7 @@ export const categories: Category[] = [
   },
   {
     id: "fruits-waste-products",
+    slug: "fruits-waste-products",
     name: "Fruits Waste Products",
     description: "Innovative products made from fruit waste and byproducts.",
     image: "/categories/fruit-waste.jpg",
@@ -123,6 +126,7 @@ export const categories: Category[] = [
   },
   {
     id: "others",
+    slug: "others",
     name: "Others",
     description: "Explore our other sustainable and eco-friendly product categories.",
     image: "/categories/others.jpg",
@@ -134,8 +138,11 @@ export const getFeaturedProducts = () => {
   return products.slice(0, 4)
 }
 
-export const getProductsByCategory = (categoryId: string) => {
-  return products.filter((product) => product.category === categoryId)
+export const getProductsByCategory = (slug: string) => {
+  const category = categories.find((c) => c.slug === slug)
+  if (!category) return []
+
+  return products.filter((product) => product.category === category.id)
 }
 
 export const getProductById = (id: string) => {

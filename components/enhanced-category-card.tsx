@@ -7,13 +7,14 @@ import { findCategoryImage, optimizeImageUrl } from "@/lib/image-service"
 
 interface CategoryCardProps {
   id: string
+  slug: string
   name: string
   link: string
   productCount?: number
   isMobile?: boolean
 }
 
-export default function EnhancedCategoryCard({ id, name, link, productCount, isMobile = false }: CategoryCardProps) {
+export default function EnhancedCategoryCard({ id, slug, name, link, productCount, isMobile = false }: CategoryCardProps) {
   const [imageUrl, setImageUrl] = useState<string>("/placeholder.svg")
   const [isLoading, setIsLoading] = useState(true)
 

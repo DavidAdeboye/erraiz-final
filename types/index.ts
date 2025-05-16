@@ -18,6 +18,7 @@ export interface Product {
 
 export interface Category {
   id: string
+  slug: string
   name: string
   image?: string
   productCount?: number

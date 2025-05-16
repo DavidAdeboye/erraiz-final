@@ -1,54 +1,52 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { jwtVerify } from "jose"
 
-// Define protected routes that require authentication
-const protectedRoutes = ["/account", "/checkout"]
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next()
 
-// Define admin-only routes
-const adminRoutes = ["/admin"]
+  // Add security headers
+  response.headers.set("X-Frame-Options", "DENY")
+  response.headers.set("X-Content-Type-Options", "nosniff")
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  // Check if the route is protected
-  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
-  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route))
-
-  if (!isProtectedRoute && !isAdminRoute) {
-    return NextResponse.next()
+  // Add Content-Security-Policy header in production
+  if (process.env.NODE_ENV === "production") {
+    response.headers.set(
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'",
+    )
   }
 
-  // Get the token from the cookie
-  const token = request.cookies.get("auth_token")?.value
-
-  // If no token, redirect to login
-  if (!token) {
-    const url = new URL("/login", request.url)
-    url.searchParams.set("redirect", pathname)
-    return NextResponse.redirect(url)
+  // Cache static assets
+  const url = request.nextUrl.pathname
+  if (
+    url.includes("/images/") ||
+    url.includes("/fonts/") ||
+    url.endsWith(".jpg") ||
+    url.endsWith(".png") ||
+    url.endsWith(".svg") ||
+    url.endsWith(".webp")
+  ) {
+    response.headers.set("Cache-Control", "public, max-age=31536000, immutable")
   }
 
-  try {
-    // Verify the token
-    const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
-    const { payload } = await jwtVerify(token, JWT_SECRET)
-
-    // For admin routes, check if user is admin
-    if (isAdminRoute && payload.user?.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url))
-    }
-
-    return NextResponse.next()
-  } catch (error) {
-    // Token is invalid, redirect to login
-    const url = new URL("/login", request.url)
-    url.searchParams.set("redirect", pathname)
-    return NextResponse.redirect(url)
+  // Cache API responses
+  if (url.startsWith("/api/")) {
+    response.headers.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
   }
+
+  // Store the current path in a cookie for redirects after login
+  const path = request.nextUrl.pathname
+  response.cookies.set("path", path, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  })
+
+  return response
 }
 
-// Configure the middleware to run only on specific paths
+// Only run middleware on specific paths
 export const config = {
-  matcher: ["/account/:path*", "/checkout/:path*", "/admin/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 }

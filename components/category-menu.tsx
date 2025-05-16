@@ -1,35 +1,35 @@
 import Link from "next/link"
 
 interface CategoryMenuProps {
-  category: string
+  categorySlug: string
 }
 
-export default function CategoryMenu({ category }: CategoryMenuProps) {
+export default function CategoryMenu({ categorySlug }: CategoryMenuProps) {
   // Different subcategories based on the main category
   const subcategories = {
-    plastic: [
-      { name: "Chairs", count: 120, href: "/categories/plastic-made-products/chairs" },
-      { name: "Tables", count: 85, href: "/categories/plastic-made-products/tables" },
-      { name: "Storage", count: 64, href: "/categories/plastic-made-products/storage" },
-      { name: "Decorative Items", count: 93, href: "/categories/plastic-made-products/decorative" },
-      { name: "Kitchen Utensils", count: 78, href: "/categories/plastic-made-products/kitchen" },
-      { name: "Outdoor Furniture", count: 42, href: "/categories/plastic-made-products/outdoor" },
+    "plastic-made-products": [
+      { name: "Chairs", count: 120, href: "/category/plastic-made-products/chairs" },
+      { name: "Tables", count: 85, href: "/category/plastic-made-products/tables" },
+      { name: "Storage", count: 64, href: "/category/plastic-made-products/storage" },
+      { name: "Decorative Items", count: 93, href: "/category/plastic-made-products/decorative" },
+      { name: "Kitchen Utensils", count: 78, href: "/category/plastic-made-products/kitchen" },
+      { name: "Outdoor Furniture", count: 42, href: "/category/plastic-made-products/outdoor" },
     ],
-    glass: [
-      { name: "Vases", count: 56, href: "/categories/glass-made-products/vases" },
-      { name: "Drinkware", count: 112, href: "/categories/glass-made-products/drinkware" },
-      { name: "Decorative Items", count: 87, href: "/categories/glass-made-products/decorative" },
-      { name: "Lighting", count: 45, href: "/categories/glass-made-products/lighting" },
+    "glass-made-products": [
+      { name: "Vases", count: 56, href: "/category/glass-made-products/vases" },
+      { name: "Drinkware", count: 112, href: "/category/glass-made-products/drinkware" },
+      { name: "Decorative Items", count: 87, href: "/category/glass-made-products/decorative" },
+      { name: "Lighting", count: 45, href: "/category/glass-made-products/lighting" },
     ],
-    fruits: [
-      { name: "Tableware", count: 38, href: "/categories/fruits-waste-products/tableware" },
-      { name: "Packaging", count: 64, href: "/categories/fruits-waste-products/packaging" },
-      { name: "Decorative Items", count: 52, href: "/categories/fruits-waste-products/decorative" },
+    "fruits-waste-products": [
+      { name: "Tableware", count: 38, href: "/category/fruits-waste-products/tableware" },
+      { name: "Packaging", count: 64, href: "/category/fruits-waste-products/packaging" },
+      { name: "Decorative Items", count: 52, href: "/category/fruits-waste-products/decorative" },
     ],
   }
 
   // Get the appropriate subcategories
-  const items = subcategories[category as keyof typeof subcategories] || []
+  const items = subcategories[categorySlug as keyof typeof subcategories] || []
 
   return (
     <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-md border border-gray-200 w-64 z-50">

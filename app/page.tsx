@@ -1,228 +1,203 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { categories, getFeaturedProducts } from "@/lib/data"
-import EnhancedProductGrid from "@/components/enhanced-product-grid"
-import EnhancedCategoryCard from "@/components/enhanced-category-card"
-import EnhancedCategoryBanner from "@/components/enhanced-category-banner"
-import { findHeroImages, optimizeImageUrl, preloadProductImages } from "@/lib/image-service"
+import { ShoppingCart, User, ChevronDown, Menu } from "lucide-react"
+import CategoryNav from "@/components/category-nav"
+import ProductGrid from "@/components/product-grid"
+import HeroSection from "@/components/hero-section"
 
 export default function Home() {
-  const featuredProducts = getFeaturedProducts()
-  const productsForYou = featuredProducts.slice(0, 4)
-  const plasticProducts = featuredProducts.slice(0, 4)
-  const glassProducts = featuredProducts.slice(0, 4)
-  const otherProducts = featuredProducts.slice(0, 4)
-
-  const [heroImages, setHeroImages] = useState<string[]>([
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-  ])
-  const [isLoadingHero, setIsLoadingHero] = useState(true)
-  const [mobileHeroImage, setMobileHeroImage] = useState("/placeholder.svg")
-  const [isLoadingMobileHero, setIsLoadingMobileHero] = useState(true)
-
-  // Preload product images for better user experience
-  useEffect(() => {
-    preloadProductImages(featuredProducts)
-  }, [featuredProducts])
-
-  // Load hero images
-  useEffect(() => {
-    let isMounted = true
-
-    const loadHeroImages = async () => {
-      try {
-        setIsLoadingHero(true)
-        const images = await findHeroImages("plastic-made-products")
-
-        if (isMounted) {
-          setHeroImages(images)
-          setMobileHeroImage(images[0])
-          setIsLoadingHero(false)
-          setIsLoadingMobileHero(false)
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error("Error loading hero images:", error)
-          setIsLoadingHero(false)
-          setIsLoadingMobileHero(false)
-        }
-      }
-    }
-
-    loadHeroImages()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
-      {/* Hero Section */}
-      <section className="mb-6 sm:mb-12">
-        {/* Mobile Hero */}
-        <div className="sm:hidden relative rounded-lg overflow-hidden">
-          {isLoadingMobileHero && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-              <div className="h-10 w-10 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
+    <div className="flex flex-col min-h-screen">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <Link href="/" className="flex items-center">
+                <Image src="/logo.png" alt="Cireco Logo" width={100} height={40} className="h-8 w-auto" />
+              </Link>
+
+              <nav className="hidden md:flex items-center space-x-6 text-sm">
+                <Link href="/" className="font-medium">
+                  Home
+                </Link>
+                <Link href="/shop" className="font-medium">
+                  Shop
+                </Link>
+                <Link href="/about" className="font-medium">
+                  About
+                </Link>
+                <div className="relative group">
+                  <button className="flex items-center gap-1 font-medium">
+                    More <ChevronDown className="h-4 w-4" />
+                  </button>
+                </div>
+              </nav>
             </div>
-          )}
 
-          <Image
-            src={optimizeImageUrl(mobileHeroImage, 600, 300) || "/placeholder.svg?height=300&width=600"}
-            alt="Sustainable Products"
-            width={600}
-            height={300}
-            className={`w-full h-40 object-cover transition-opacity duration-300 ${
-              isLoadingMobileHero ? "opacity-0" : "opacity-100"
-            }`}
-            onLoad={() => setIsLoadingMobileHero(false)}
-          />
-
-          <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
-            <h1 className="text-white text-lg font-bold mb-2">Sustainable Products</h1>
-            <p className="text-white text-sm mb-3 max-w-md">
-              Discover eco-friendly items made from recycled materials.
-            </p>
-            <Link href="/categories/plastic-made-products" className="btn-primary text-sm inline-block w-max">
-              Shop Now
-            </Link>
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2">
+                <Link href="/account" className="text-sm font-medium">
+                  My Account
+                </Link>
+                <User className="h-5 w-5" />
+              </div>
+              <div className="hidden md:flex items-center gap-2">
+                <Link href="/cart" className="text-sm font-medium">
+                  Cart
+                </Link>
+                <ShoppingCart className="h-5 w-5" />
+              </div>
+              <button className="md:hidden">
+                <Menu className="h-6 w-6" />
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Desktop Hero */}
-        <div className="hidden sm:grid md:grid-cols-2 gap-6 items-center">
-          <div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Plastic Made Products</h1>
-            <p className="text-gray-600 mb-6 max-w-md">
-              Discover a range of innovative and sustainable products crafted from recycled plastics.
-            </p>
-            <Link href="/categories/plastic-made-products" className="btn-primary">
-              View Items
-            </Link>
+      <CategoryNav />
+
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <HeroSection />
+
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Categories</h2>
+              <Link href="/shop" className="text-sm text-green-600 hover:underline">
+                View all
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {["Plastic", "Glass", "Fruits waste", "Palm fonds"].map((category) => (
+                <Link
+                  key={category}
+                  href={`/category/${category.toLowerCase().replace(" ", "-")}`}
+                  className="bg-gray-100 rounded-lg p-6 flex flex-col items-center justify-center aspect-square hover:bg-gray-200 transition"
+                >
+                  <h3 className="font-medium text-center">{category}</h3>
+                  <p className="text-xs text-gray-500 mt-1">View products</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Products for you</h2>
+              <Link href="/products" className="text-sm text-green-600 hover:underline">
+                View all
+              </Link>
+            </div>
+            <ProductGrid category="featured" />
+          </section>
+
+          <section className="mt-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Plastic based products</h2>
+              <Link href="/category/plastic" className="text-sm text-green-600 hover:underline">
+                View all
+              </Link>
+            </div>
+            <ProductGrid category="plastic" />
+          </section>
+
+          <section className="mt-16 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="aspect-video bg-gray-200"></div>
+              <div className="p-8 flex flex-col justify-center">
+                <h2 className="text-2xl font-bold mb-2">Lorem ipsum dolor sit amet</h2>
+                <p className="text-gray-600 mb-6">
+                  Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition w-fit">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="mt-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Glass based products</h2>
+              <Link href="/category/glass" className="text-sm text-green-600 hover:underline">
+                View all
+              </Link>
+            </div>
+            <ProductGrid category="glass" />
+          </section>
+        </div>
+      </main>
+
+      <footer className="bg-gray-100 mt-20">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-bold mb-4">About Us</h3>
+              <p className="text-sm text-gray-600">
+                We are dedicated to recycling and reusing waste materials to create sustainable products.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Customer Support</h3>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <Link href="/contact" className="text-gray-600 hover:text-green-600">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="text-gray-600 hover:text-green-600">
+                    FAQs
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/shipping" className="text-gray-600 hover:text-green-600">
+                    Shipping Information
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Quick Links</h3>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <Link href="/products" className="text-gray-600 hover:text-green-600">
+                    All Products
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="text-gray-600 hover:text-green-600">
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="text-gray-600 hover:text-green-600">
+                    About Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Newsletter</h3>
+              <p className="text-sm text-gray-600 mb-2">Subscribe to get updates on new products and offers.</p>
+              <div className="flex">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  className="px-3 py-2 border border-gray-300 rounded-l-md text-sm w-full"
+                />
+                <button className="bg-green-600 text-white px-4 py-2 rounded-r-md hover:bg-green-700 transition">
+                  Subscribe
+                </button>
+              </div>
+            </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            {isLoadingHero ? (
-              // Loading skeleton for hero images
-              <>
-                {[0, 1, 2, 3].map((index) => (
-                  <div key={index} className="aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
-                ))}
-              </>
-            ) : (
-              // Actual hero images
-              <>
-                {heroImages.map((image, index) => (
-                  <Image
-                    key={index}
-                    src={optimizeImageUrl(image, 300, 300) || "/placeholder.svg?height=300&width=300"}
-                    alt={`Recycled product ${index + 1}`}
-                    width={300}
-                    height={300}
-                    className="rounded-lg object-cover aspect-square"
-                  />
-                ))}
-              </>
-            )}
+          <div className="border-t border-gray-200 mt-12 pt-6 text-sm text-gray-500 text-center">
+            © {new Date().getFullYear()} Cireco. All rights reserved.
           </div>
         </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="mb-6 sm:mb-12">
-        <div className="sm:flex sm:items-center sm:justify-between mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-xl font-bold mb-3 sm:mb-0">Explore these categories</h2>
-          <Link href="/categories" className="text-xs sm:text-sm text-green-600 hover:underline flex items-center">
-            <span className="sm:hidden">See all</span>
-            <span className="hidden sm:inline">See all</span>
-            <svg
-              className="w-4 h-4 ml-1 hidden sm:inline"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-          {categories.slice(0, 4).map((category) => (
-            <EnhancedCategoryCard
-              key={category.id}
-              id={category.id}
-              name={category.name}
-              link={`/categories/${category.id}`}
-              productCount={category.productCount}
-              isMobile={true}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Featured Products Section */}
-      <section className="mb-6 sm:mb-12">
-        <EnhancedProductGrid products={productsForYou} title="Products for you" viewAllLink="/products" />
-      </section>
-
-      {/* Featured Category Banner - Desktop Only */}
-      <div className="hidden sm:block mb-12">
-        <EnhancedCategoryBanner
-          title="Plastic Made Products"
-          description="Discover a range of innovative and sustainable products crafted from recycled plastics."
-          categoryId="plastic-made-products"
-          link="/categories/plastic-made-products"
-        />
-      </div>
-
-      {/* Plastic Products Section */}
-      <section className="mb-6 sm:mb-12">
-        <EnhancedProductGrid
-          products={plasticProducts}
-          title="Plastic made products"
-          viewAllLink="/categories/plastic-made-products"
-        />
-      </section>
-
-      {/* Promotional Banner - Desktop Only */}
-      <section className="hidden sm:block mb-12 bg-gray-100 rounded-lg overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-6 p-6">
-          <div className="flex flex-col justify-center">
-            <h2 className="text-2xl font-bold mb-4">Shoes from Recycled Items</h2>
-            <p className="text-gray-600 mb-6">
-              Comfortable and stylish shoes made from recycled materials. Better for your feet, better for the planet.
-            </p>
-            <Link href="/categories/footwear" className="btn-primary inline-block w-max">
-              Shop Now
-            </Link>
-          </div>
-          <div className="flex justify-center">
-            <Image src="/products/shoes-1.jpg" alt="Recycled shoes" width={400} height={300} className="rounded-lg" />
-          </div>
-        </div>
-      </section>
-
-      {/* Glass Products Section */}
-      <section className="mb-6 sm:mb-12">
-        <EnhancedProductGrid
-          products={glassProducts}
-          title="Glass made products"
-          viewAllLink="/categories/glass-made-products"
-        />
-      </section>
-
-      {/* Other Products Section */}
-      <section className="mb-6 sm:mb-12">
-        <EnhancedProductGrid products={otherProducts} title="Other products" viewAllLink="/categories/others" />
-      </section>
+      </footer>
     </div>
   )
 }

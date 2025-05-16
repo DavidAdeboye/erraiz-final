@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getUserByEmail, createUser } from "@/lib/data"
+import { getUserByEmail, createUser } from "@/lib/user"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 

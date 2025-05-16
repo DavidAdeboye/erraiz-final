@@ -1,121 +1,142 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
-import { useAuth } from "@/context/auth-context"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-import AccountSidebar from "@/components/account/account-sidebar"
-import CurrencySelector from "@/components/currency/currency-selector"
-import { useCurrency } from "@/context/currency-context"
-import { Save } from "lucide-react"
+import { useActionState } from "react"
+import { updatePassword } from "@/app/actions"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function AccountSettingsPage() {
-  const { isAuthenticated, isLoading } = useAuth()
-  const router = useRouter()
-  const { currency } = useCurrency()
-  const [successMessage, setSuccessMessage] = useState("")
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login")
-    }
-  }, [isAuthenticated, isLoading, router])
-
-  const handleSaveSettings = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSuccessMessage("Settings saved successfully")
-
-    // Clear success message after 3 seconds
-    setTimeout(() => {
-      setSuccessMessage("")
-    }, 3000)
-  }
-
-  if (isLoading || !isAuthenticated) {
-    return null
-  }
+  const [passwordState, passwordAction] = useActionState(updatePassword, { error: null, success: null })
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <h1 className="text-2xl font-bold mb-8">Account Settings</h1>
-
-      <div className="grid md:grid-cols-4 gap-8">
-        <div>
-          <AccountSidebar />
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">Change Password</h2>
+          <p className="text-sm text-gray-500">Update your password</p>
         </div>
 
-        <div className="md:col-span-3">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-6">Preferences</h2>
+        <div className="p-6">
+          {passwordState?.error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+              {passwordState.error}
+            </div>
+          )}
 
-            {successMessage && <div className="mb-6 p-3 bg-green-50 text-green-700 rounded-md">{successMessage}</div>}
+          {passwordState?.success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-6" role="alert">
+              {passwordState.success}
+            </div>
+          )}
 
-            <form onSubmit={handleSaveSettings} className="space-y-6">
+          <form action={passwordAction} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Current Password</Label>
+              <Input id="currentPassword" name="currentPassword" type="password" required />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input id="newPassword" name="newPassword" type="password" required />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Input id="confirmPassword" name="confirmPassword" type="password" required />
+            </div>
+
+            <Button type="submit" className="bg-green-600 hover:bg-green-700">
+              Update Password
+            </Button>
+          </form>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">Email Preferences</h2>
+          <p className="text-sm text-gray-500">Manage your email notifications</p>
+        </div>
+
+        <div className="p-6">
+          <form className="space-y-4">
+            <div className="flex items-center justify-between">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                <div className="max-w-xs">
-                  <CurrencySelector />
-                </div>
-                <p className="mt-2 text-sm text-gray-500">
-                  All prices will be displayed in {currency.name} ({currency.symbol})
-                </p>
+                <h3 className="font-medium">Order Updates</h3>
+                <p className="text-sm text-gray-500">Receive updates about your orders</p>
               </div>
-
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium mb-4">Notification Preferences</h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="email-notifications"
-                        name="email-notifications"
-                        type="checkbox"
-                        defaultChecked
-                        className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label htmlFor="email-notifications" className="font-medium text-gray-700">
-                        Email notifications
-                      </label>
-                      <p className="text-gray-500">Receive emails about your orders, account updates, and promotions</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="marketing-emails"
-                        name="marketing-emails"
-                        type="checkbox"
-                        defaultChecked
-                        className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label htmlFor="marketing-emails" className="font-medium text-gray-700">
-                        Marketing emails
-                      </label>
-                      <p className="text-gray-500">Receive emails about new products, sales, and special offers</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              <div className="relative inline-block w-12 h-6">
+                <input type="checkbox" id="orderUpdates" className="sr-only" defaultChecked />
+                <label
+                  htmlFor="orderUpdates"
+                  className="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out"
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save settings
-                </button>
+                  <span
+                    className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform translate-x-0"
+                    style={{ transform: "translateX(0)" }}
+                  ></span>
+                </label>
               </div>
-            </form>
-          </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Promotions</h3>
+                <p className="text-sm text-gray-500">Receive promotions and discounts</p>
+              </div>
+              <div className="relative inline-block w-12 h-6">
+                <input type="checkbox" id="promotions" className="sr-only" defaultChecked />
+                <label
+                  htmlFor="promotions"
+                  className="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out"
+                >
+                  <span
+                    className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform translate-x-0"
+                    style={{ transform: "translateX(0)" }}
+                  ></span>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Newsletter</h3>
+                <p className="text-sm text-gray-500">Receive our weekly newsletter</p>
+              </div>
+              <div className="relative inline-block w-12 h-6">
+                <input type="checkbox" id="newsletter" className="sr-only" />
+                <label
+                  htmlFor="newsletter"
+                  className="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out"
+                >
+                  <span
+                    className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform translate-x-0"
+                    style={{ transform: "translateX(0)" }}
+                  ></span>
+                </label>
+              </div>
+            </div>
+
+            <Button type="submit" className="bg-green-600 hover:bg-green-700">
+              Save Preferences
+            </Button>
+          </form>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold text-red-600">Danger Zone</h2>
+          <p className="text-sm text-gray-500">Permanent actions for your account</p>
+        </div>
+
+        <div className="p-6">
+          <Button variant="destructive">Delete Account</Button>
+          <p className="text-xs text-gray-500 mt-2">
+            This action cannot be undone. This will permanently delete your account and remove your data from our
+            servers.
+          </p>
         </div>
       </div>
     </div>
